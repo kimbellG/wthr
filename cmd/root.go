@@ -18,7 +18,6 @@ package cmd
 import (
 	"fmt"
 	"log"
-	"os"
 
 	"wthr/weather"
 
@@ -30,10 +29,16 @@ import (
 
 var cfgFile string
 
+type Config struct {
+	APIKey string `mapstructure:"API_Key"`
+}
+
+var conf Config
+
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "wthr",
-	Short: "A brief description of your application",
+	Short: "app for get weather.",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
 
@@ -62,12 +67,12 @@ func mainController(cmd *cobra.Command, args []string) {
 	fmt.Println("----------------------------------------------")
 
 	for _, arg := range args {
+		request := weather.WeatherRequest{arg, conf.APIKey}
 		if fstatus, _ := cmd.Flags().GetBool("current"); fstatus {
-			fmt.Printf(weather.GetCurrentWeather(arg))
+			fmt.Printf(weather.GetCurrentWeather(request))
 			fmt.Println("----------------------------------------------")
 		}
 	}
-
 }
 
 func isCurrentArgs(args []string) bool {
@@ -77,7 +82,7 @@ func isCurrentArgs(args []string) bool {
 func init() {
 	cobra.OnInitialize(initConfig)
 	rootCmd.Flags().BoolP("current", "c", false, "Get current weather in given city")
-
+	log.SetFlags(0)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
@@ -103,12 +108,30 @@ func initConfig() {
 		// Search config in home directory with name ".wthr" (without extension).
 		viper.AddConfigPath(home)
 		viper.SetConfigName(".wthr")
+		viper.SetConfigType("env")
 	}
 
 	viper.AutomaticEnv() // read in environment variables that match
 
 	// If a config file is found, read it in.
-	if err := viper.ReadInConfig(); err == nil {
-		fmt.Fprintln(os.Stderr, "Using config file:", viper.ConfigFileUsed())
+	assetsConfigFile(viper.ReadInConfig())
+
+	viper.Unmarshal(&conf)
+
+	if conf.APIKey == "" {
+		fmt.Print("Incorrect config file:")
+		log.Fatalln(formatConfigErrorMessage)
 	}
+}
+
+func assetsConfigFile(err error) {
+	if err != nil {
+		fmt.Println(err)
+		log.Fatalln(formatConfigErrorMessage())
+	}
+}
+
+func formatConfigErrorMessage() string {
+	return fmt.Sprintf(`Create config file $HOME/.wthr.yaml or input him with option --config
+Required info: API_KEY for %s`, weather.APIURL)
 }

@@ -25,7 +25,7 @@ func formatOutputWeaterRegion(country SysInfo, name string) string {
 }
 
 func formatOutputTemp(temperatures MainInfo, condition WeatherInfo) string {
-	return fmt.Sprintf("Temp:\n\tCurrent: %.0f.\n\tMin-Max: %.0f-%.0f\n\tFeels like: %.0f\n\tCondition of weather: %s",
+	return fmt.Sprintf("Temp:\n\tCurrent: %.0f\n\tMin-Max: %.0f-%.0f\n\tFeels like: %.0f\n\tCondition of weather: %s",
 		temperatures.Temp, temperatures.TempMin, temperatures.TempMax, temperatures.FeelsLike, condition.Description)
 }
 

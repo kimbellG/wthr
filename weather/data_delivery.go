@@ -13,12 +13,12 @@ func getHTTPSRequest(url string) *http.Response {
 	return resp
 }
 
-func getURLForCurrentWeatherData(city, metric string) string {
-	return getURLRequest(requestParametrsToString(map[string]string{"q": city, "appid": apiKey, "units": metric}))
+func getURLForCurrentWeatherData(req WeatherRequest) string {
+	return getURLRequest(requestParametrsToString(map[string]string{"q": req.CityName, "appid": req.APIKey, "units": defaultUnits}))
 }
 
 func getURLRequest(params string) string {
-	return apiURL + "?" + params
+	return APIURL + "?" + params
 }
 
 func assetsHTTPStatus(resp *http.Response) {

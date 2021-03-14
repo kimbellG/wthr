@@ -29,6 +29,10 @@ type AnswerWeatherServer struct {
 	Name       string
 }
 
-const apiURL = "api.openweathermap.org/data/2.5/weather"
-const apiKey = "4136d0b9eb526b13e0b384992428d4fa"
+type WeatherRequest struct {
+	CityName string
+	APIKey   string
+}
+
+const APIURL = "api.openweathermap.org/data/2.5/weather"
 const defaultUnits = "metric"

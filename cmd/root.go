@@ -63,11 +63,15 @@ func assetsInputArgs(isCurrentArgs bool) {
 }
 
 func mainController(cmd *cobra.Command, args []string) {
-	assetsInputArgs(isCurrentArgs(args))
+	assetsInputArgs(isCurrentArgs(cmd, args))
 	fmt.Println("----------------------------------------------")
 
+	if fstatus, _ := cmd.Flags().GetBool("geolocation"); fstatus {
+		getWeatherByIPCoordinates()
+	}
+
 	for _, arg := range args {
-		request := weather.WeatherRequest{arg, conf.APIKey}
+		request := weather.WeatherRequestByCityName{arg, conf.APIKey}
 		if fstatus, _ := cmd.Flags().GetBool("current"); fstatus {
 			fmt.Printf(weather.GetCurrentWeather(request))
 			fmt.Println("----------------------------------------------")
@@ -75,19 +79,26 @@ func mainController(cmd *cobra.Command, args []string) {
 	}
 }
 
-func isCurrentArgs(args []string) bool {
-	return len(args) > 0
+func getWeatherByIPCoordinates() {
+	var coord weather.AnswerIpGeolocationServer = *weather.GetGeolocationCoordinates()
+	fmt.Println(weather.GetCurrentWeatherForGeolocation(weather.WeatherRequestByGeoCoord{Coordinate: coord, APIKey: weather.GEOAPIKEY}))
+}
+
+func isCurrentArgs(cmd *cobra.Command, args []string) bool {
+	geoFlagStatus, _ := cmd.Flags().GetBool("geolocation")
+	return geoFlagStatus || len(args) > 0
 }
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.Flags().BoolP("current", "c", false, "Get current weather in given city")
 	log.SetFlags(0)
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
 
 	rootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.wthr.yaml)")
+	rootCmd.Flags().BoolP("current", "c", false, "Get current weather in given city")
+	rootCmd.Flags().BoolP("geolocation", "g", false, "Get weather by geolocation")
 
 	// Cobra also supports local flags, which will only run
 	// when this action is called directly.

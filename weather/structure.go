@@ -29,9 +29,19 @@ type AnswerWeatherServer struct {
 	Name       string
 }
 
-type WeatherRequest struct {
+type AnswerIpGeolocationServer struct {
+	Latitude   string
+	Longtitude string
+}
+
+type WeatherRequestByCityName struct {
 	CityName string
 	APIKey   string
+}
+
+type WeatherRequestByGeoCoord struct {
+	Coordinate AnswerIpGeolocationServer
+	APIKey     string
 }
 
 const APIURL = "api.openweathermap.org/data/2.5/weather"

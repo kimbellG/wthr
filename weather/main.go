@@ -1,5 +1,9 @@
 package weather
 
-func GetCurrentWeather(req WeatherRequest) string {
-	return formatOutputWeatherInfo(decodingJSONAndCloseConnection(getHTTPSRequest(getURLForCurrentWeatherData(req))))
+func GetCurrentWeather(req WeatherRequestByCityName) string {
+	return formatOutputWeatherInfo(decodingJSONBCurrentWeatherAndCloseConnection(getHTTPSRequest(getURLForCurrentWeatherDataByCityName(req))))
+}
+
+func GetCurrentWeatherForGeolocation(req WeatherRequestByGeoCoord) string {
+	return formatOutputWeatherInfo(decodingJSONBCurrentWeatherAndCloseConnection(getHTTPSRequest(getURLForCurrentWeatherDataByGeoCoord(req))))
 }

@@ -6,7 +6,7 @@ import (
 	"net/http"
 )
 
-func decodingJSONAndCloseConnection(resp *http.Response) *AnswerWeatherServer {
+func decodingJSONBCurrentWeatherAndCloseConnection(resp *http.Response) *AnswerWeatherServer {
 	defer resp.Body.Close()
 
 	var result AnswerWeatherServer

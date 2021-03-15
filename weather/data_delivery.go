@@ -1,6 +1,7 @@
 package weather
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"time"
@@ -13,11 +14,16 @@ func getHTTPSRequest(url string) *http.Response {
 	return resp
 }
 
-func getURLForCurrentWeatherData(req WeatherRequest) string {
-	return getURLRequest(requestParametrsToString(map[string]string{"q": req.CityName, "appid": req.APIKey, "units": defaultUnits}))
+func getURLForCurrentWeatherDataByCityName(req WeatherRequestByCityName) string {
+	return getURLRequestWithParametrs(APIURL, requestParametrsToString(map[string]string{"q": req.CityName, "appid": req.APIKey, "units": defaultUnits}))
 }
 
-func getURLRequest(params string) string {
+func getURLForCurrentWeatherDataByGeoCoord(req WeatherRequestByGeoCoord) string {
+	return getURLRequestWithParametrs(APIURL, requestParametrsToString(map[string]string{"lat": fmt.Sprint(req.Coordinate.Latitude), "lon": fmt.Sprint(req.Coordinate.Longtitude),
+		"appid": req.APIKey, "units": defaultUnits}))
+}
+
+func getURLRequestWithParametrs(APIURL string, params string) string {
 	return APIURL + "?" + params
 }
 

@@ -8,6 +8,8 @@
   4. github.com/spf13/viper
 
 Для установки:
-  1. Склонировать репозиторий.
+  1. Склонировать репозиторий в $GOROOT/src.
   2. Зайти в папку с проектом
   3. Выполнить в терминале: "go install wthr"
+  4. Добавить конфиг файл с ключами доступа к API ресурсов: https://openweathermap.org/, https://ipgeolocation.io/
+

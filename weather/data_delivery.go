@@ -10,7 +10,6 @@ import (
 func getHTTPSRequest(url string) *http.Response {
 	resp, err := createClient().Get("https://" + url)
 	assetsGETrequest(err)
-	assetsHTTPStatus(resp)
 	return resp
 }
 
@@ -19,18 +18,12 @@ func getURLForCurrentWeatherDataByCityName(req WeatherRequestByCityName) string 
 }
 
 func getURLForCurrentWeatherDataByGeoCoord(req WeatherRequestByGeoCoord) string {
-	return getURLRequestWithParametrs(APIURL, requestParametrsToString(map[string]string{"lat": fmt.Sprint(req.Coordinate.Latitude), "lon": fmt.Sprint(req.Coordinate.Longtitude),
+	return getURLRequestWithParametrs(APIURL, requestParametrsToString(map[string]string{"lat": fmt.Sprint(req.Coordinate.Latitude), "lon": fmt.Sprint(req.Coordinate.Longitude),
 		"appid": req.APIKey, "units": defaultUnits}))
 }
 
 func getURLRequestWithParametrs(APIURL string, params string) string {
 	return APIURL + "?" + params
-}
-
-func assetsHTTPStatus(resp *http.Response) {
-	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Faild http GET-request: %v", resp.Status)
-	}
 }
 
 func assetsGETrequest(err error) {

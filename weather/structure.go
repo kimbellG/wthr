@@ -1,7 +1,18 @@
 package weather
 
+type Config struct {
+	WeatherAPIKey string `mapstructure:"weather_API_Key"`
+	GEOAPIKEY     string `mapstructure:"geo_API_KEY"`
+}
+
+var Conf Config
+
 type WeatherInfo struct {
 	Description string
+}
+
+type ErrorMessage struct {
+	Message string
 }
 
 type MainInfo struct {
@@ -30,8 +41,8 @@ type AnswerWeatherServer struct {
 }
 
 type AnswerIpGeolocationServer struct {
-	Latitude   string
-	Longtitude string
+	Latitude  string
+	Longitude string
 }
 
 type WeatherRequestByCityName struct {

@@ -6,7 +6,7 @@ import (
 )
 
 func formatOutputWeatherInfo(fullWeatherInfo *AnswerWeatherServer) string {
-	return fmt.Sprintf("Time: %s. Region: %s\n%s\n%s\t%s\n",
+	return fmt.Sprintf("at: %s\nin: %s:\n%s\n\t%s\t%s\n",
 		formatOutputTime(fullWeatherInfo.Dt), formatOutputWeaterRegion(*fullWeatherInfo.Sys, fullWeatherInfo.Name),
 		formatOutputTemp(*fullWeatherInfo.Main, *fullWeatherInfo.Weather[0]),
 		formatOutputWind(*fullWeatherInfo.Wind),
@@ -14,10 +14,10 @@ func formatOutputWeatherInfo(fullWeatherInfo *AnswerWeatherServer) string {
 }
 
 func formatOutputTime(tm int64) string {
-	curTime := time.Unix(tm, 0)
-	return fmt.Sprintf("%d.%d.%d %d:%d:%d",
-		curTime.Day(), curTime.Month(), curTime.Year(),
-		curTime.Hour(), curTime.Minute(), curTime.Second())
+	t := time.Unix(tm, 0)
+	return fmt.Sprintf("%02d.%02d.%d, %02d:%02d",
+		t.Day(), t.Month(), t.Year(),
+		t.Hour(), t.Minute())
 }
 
 func formatOutputWeaterRegion(country SysInfo, name string) string {
@@ -25,7 +25,7 @@ func formatOutputWeaterRegion(country SysInfo, name string) string {
 }
 
 func formatOutputTemp(temperatures MainInfo, condition WeatherInfo) string {
-	return fmt.Sprintf("Temp:\n\tCurrent: %.0f\n\tMin-Max: %.0f-%.0f\n\tFeels like: %.0f\n\tCondition of weather: %s",
+	return fmt.Sprintf("\tTemp:\n\t\tCurrent: %.0f \u2103\n\t\tMin-Max: %.0f \u2103 -- %.0f \u2103\n\t\tFeels like: %.0f \u2103\n\t\tCondition of weather: %s",
 		temperatures.Temp, temperatures.TempMin, temperatures.TempMax, temperatures.FeelsLike, condition.Description)
 }
 
@@ -35,4 +35,8 @@ func formatOutputWind(wind WindInfo) string {
 
 func formatOutputVisibility(visibility int) string {
 	return fmt.Sprintf("Visibility: %.1f km.", float32(visibility/1000))
+}
+
+func formatOutputError(err error) string {
+	return fmt.Sprint(err)
 }

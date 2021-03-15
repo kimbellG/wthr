@@ -29,16 +29,10 @@ import (
 
 var cfgFile string
 
-type Config struct {
-	APIKey string `mapstructure:"API_Key"`
-}
-
-var conf Config
-
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:   "wthr",
-	Short: "app for get weather.",
+	Short: "cli app for get weather.",
 	Long: `A longer description that spans multiple lines and likely contains
 examples and usage of using your application. For example:
 
@@ -64,24 +58,25 @@ func assetsInputArgs(isCurrentArgs bool) {
 
 func mainController(cmd *cobra.Command, args []string) {
 	assetsInputArgs(isCurrentArgs(cmd, args))
-	fmt.Println("----------------------------------------------")
+	fmt.Println("")
 
 	if fstatus, _ := cmd.Flags().GetBool("geolocation"); fstatus {
 		getWeatherByIPCoordinates()
+		fmt.Println("-------------------------------------------------------")
 	}
 
 	for _, arg := range args {
-		request := weather.WeatherRequestByCityName{arg, conf.APIKey}
+		request := weather.WeatherRequestByCityName{arg, weather.Conf.WeatherAPIKey}
 		if fstatus, _ := cmd.Flags().GetBool("current"); fstatus {
 			fmt.Printf(weather.GetCurrentWeather(request))
-			fmt.Println("----------------------------------------------")
+			fmt.Println("-------------------------------------------------------")
 		}
 	}
 }
 
 func getWeatherByIPCoordinates() {
 	var coord weather.AnswerIpGeolocationServer = *weather.GetGeolocationCoordinates()
-	fmt.Println(weather.GetCurrentWeatherForGeolocation(weather.WeatherRequestByGeoCoord{Coordinate: coord, APIKey: weather.GEOAPIKEY}))
+	fmt.Println(weather.GetCurrentWeatherForGeolocation(weather.WeatherRequestByGeoCoord{Coordinate: coord, APIKey: weather.Conf.WeatherAPIKey}))
 }
 
 func isCurrentArgs(cmd *cobra.Command, args []string) bool {
@@ -127,9 +122,9 @@ func initConfig() {
 	// If a config file is found, read it in.
 	assetsConfigFile(viper.ReadInConfig())
 
-	viper.Unmarshal(&conf)
+	viper.Unmarshal(&weather.Conf)
 
-	if conf.APIKey == "" {
+	if weather.Conf.WeatherAPIKey == "" || weather.Conf.GEOAPIKEY == "" {
 		fmt.Print("Incorrect config file:")
 		log.Fatalln(formatConfigErrorMessage)
 	}
@@ -144,5 +139,5 @@ func assetsConfigFile(err error) {
 
 func formatConfigErrorMessage() string {
 	return fmt.Sprintf(`Create config file $HOME/.wthr.yaml or input him with option --config
-Required info: API_KEY for %s`, weather.APIURL)
+Required info: API_KEY for %s. API_KEY for `, weather.APIURL, weather.GEOAPIURL)
 }
